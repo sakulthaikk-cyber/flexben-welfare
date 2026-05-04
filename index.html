@@ -9,6 +9,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
@@ -54,60 +56,98 @@
     </style>
 </head>
 
-<body class="min-h-screen bg-zinc-50 flex flex-col text-zinc-900">
+<body class="min-h-screen bg-zinc-50 text-zinc-900">
 
-    <!-- Header -->
-    <header class="bg-white border-b border-zinc-200 sticky top-0 z-10 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center gap-3">
-                    <div class="bg-zinc-900 p-2 rounded-xl shadow-sm">
-                        <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
-                    </div>
-                    <h1 class="text-xl font-bold tracking-tight text-zinc-900">FlexBen</h1>
+    <!-- Login Page -->
+    <div id="login-container" class="flex min-h-screen items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-sm w-full animate-in">
+            <div class="flex justify-center mb-6">
+                <div class="bg-zinc-900 p-3 rounded-2xl shadow-sm">
+                    <i data-lucide="wallet" class="w-8 h-8 text-white"></i>
                 </div>
+            </div>
+            <h2 class="text-2xl font-bold text-center text-zinc-900 mb-2">เข้าสู่ระบบ FlexBen</h2>
+            <p class="text-sm text-zinc-500 text-center mb-6">เข้าสู่ระบบด้วยอีเมลและรหัสพนักงาน</p>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-700 mb-1">อีเมล (Email)</label>
+                    <input type="email" id="loginEmail" required
+                        class="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow"
+                        placeholder="email@scg.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-zinc-700 mb-1">รหัสผ่าน (รหัสพนักงาน / ID)</label>
+                    <input type="password" id="loginPassword" required
+                        class="w-full border border-zinc-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow"
+                        placeholder="รหัสพนักงาน">
+                </div>
+                <button type="submit" id="loginBtn" disabled
+                    class="w-full bg-zinc-900 text-white rounded-xl py-3 font-semibold hover:bg-zinc-800 transition-transform active:scale-[0.98] shadow-md flex justify-center items-center gap-2">
+                    <i data-lucide="loader-2" class="w-4 h-4 animate-spin hidden" id="loginSpinner"></i>
+                    <span id="loginBtnText">กำลังโหลดข้อมูล...</span>
+                </button>
+            </form>
+            <p id="loginError" class="text-rose-500 text-sm text-center mt-4 hidden">อีเมลหรือรหัสผ่านไม่ถูกต้อง</p>
+        </div>
+    </div>
 
-                <div class="flex items-center gap-4">
+    <!-- Main App -->
+    <div id="app-container" class="hidden flex-col min-h-screen">
+        <!-- Header -->
+        <header class="bg-white border-b border-zinc-200 sticky top-0 z-10 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
                     <div class="flex items-center gap-3">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-sm font-semibold text-zinc-900">สกุลไทย ใจดี</p>
-                            <p class="text-xs text-zinc-500 capitalize">HR Admin</p>
+                        <div class="bg-zinc-900 p-2 rounded-xl shadow-sm">
+                            <i data-lucide="wallet" class="w-5 h-5 text-white"></i>
                         </div>
-                        <div
-                            class="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 shadow-sm">
-                            <i data-lucide="user" class="w-4 h-4 text-zinc-600"></i>
+                        <h1 class="text-xl font-bold tracking-tight text-zinc-900">FlexBen</h1>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-sm font-semibold text-zinc-900" id="header-user-name">สกุลไทย ใจดี</p>
+                                <p class="text-xs text-zinc-500 capitalize" id="header-user-role">HR Admin</p>
+                            </div>
+                            <div
+                                class="w-9 h-9 rounded-full bg-zinc-100 flex items-center justify-center border border-zinc-200 shadow-sm">
+                                <i data-lucide="user" class="w-4 h-4 text-zinc-600"></i>
+                            </div>
+                            <button
+                                class="p-2 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                                title="ออกจากระบบ" onclick="logout()">
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                            </button>
                         </div>
-                        <button class="p-2 text-zinc-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                            title="ออกจากระบบ" onclick="alert('ออกจากระบบแล้ว')">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                        </button>
                     </div>
                 </div>
             </div>
+        </header>
+
+        <div class="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full">
+            <!-- Sidebar Navigation -->
+            <aside
+                class="w-full md:w-64 p-4 md:p-6 border-b md:border-b-0 md:border-r border-zinc-200 bg-white md:bg-transparent">
+                <nav class="space-y-2">
+                    <button onclick="switchTab('portal')" id="nav-portal"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-zinc-900 text-white shadow-sm">
+                        <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+                        Employee Portal
+                    </button>
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" style="display: none;"
+                        class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors text-zinc-600 hover:bg-zinc-100">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+                        HR Dashboard
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="flex-1 p-4 md:p-8 overflow-auto" id="main-content">
+                <!-- Content will be injected here via Javascript -->
+            </main>
         </div>
-    </header>
-
-    <div class="flex-1 flex flex-col md:flex-row max-w-7xl mx-auto w-full">
-        <!-- Sidebar Navigation -->
-        <aside class="w-full md:w-64 p-4 md:p-6 border-b md:border-b-0 md:border-r border-zinc-200 bg-white md:bg-transparent">
-            <nav class="space-y-2">
-                <button onclick="switchTab('portal')" id="nav-portal"
-                    class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-zinc-900 text-white shadow-sm">
-                    <i data-lucide="clipboard-list" class="w-4 h-4"></i>
-                    Employee Portal
-                </button>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard"
-                    class="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors text-zinc-600 hover:bg-zinc-100">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-                    HR Dashboard
-                </button>
-            </nav>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 p-4 md:p-8 overflow-auto" id="main-content">
-            <!-- Content will be injected here via Javascript -->
-        </main>
     </div>
 
     <!-- Modal: New Request -->
@@ -166,13 +206,14 @@
     <script>
         // Mock Data Storage (To simulate the database)
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxIXpduEXfwu7ommdWWopK50IKxlRDFKRmyKcBcyGXo7FITa-5FFQlNHQ_HxwhfhOHi/exec"; // ⚠️ แทนที่ด้วย URL ของคุณ
-        
-        let currentUser = { name: 'สกุลไทย ก.', email: 'sakulthai@company.com', role: 'hr' };
-        
+
+        let currentUser = null;
+        let appUsers = [];
         let balances = [];
         let requests = [];
+        let dashboardChart = null;
 
-        let hrActiveTab = 'pending'; // Default tab for HR Dashboard
+        let hrActiveTab = 'overview'; // Default tab for HR Dashboard
 
         // Initializer
         document.addEventListener('DOMContentLoaded', () => {
@@ -183,49 +224,57 @@
             try {
                 // Show loading state
                 const mainContent = document.getElementById('main-content');
-                if(mainContent) {
+                if (mainContent) {
                     mainContent.innerHTML = '<div class="flex flex-col items-center justify-center p-24 text-zinc-400"><i data-lucide="loader-2" class="w-10 h-10 animate-spin mb-4"></i><p class="font-medium">กำลังโหลดข้อมูลจาก Google Sheet...</p></div>';
                     lucide.createIcons();
                 }
 
                 const response = await fetch(WEB_APP_URL);
                 const result = await response.json();
-                
+
                 // สำหรับตรวจสอบโครงสร้างข้อมูลที่ดึงมา (ให้เปิด F12 ดู Console)
                 console.log("ข้อมูลดิบจาก Google Sheet:", result);
-                
+
                 if (result.status === "success") {
                     const data = result.data;
-                    
+
                     if (data.users.length === 0 && data.points.length === 0 && data.logs.length === 0) {
                         console.warn("ไม่พบข้อมูลเลย! ตรวจสอบชื่อ Tab (Sheet) ใน Google Sheet ว่าสะกดตรงตามนี้เป๊ะไหม: 'log daliy', 'point เหลือ', 'User'");
                         alert("⚠️ ระบบดึงข้อมูลมาได้ 0 รายการ\nโปรดตรวจสอบชื่อ Tab ด้านล่างของ Google Sheet ว่าพิมพ์ตรงกับ 'log daliy', 'point เหลือ', 'User' หรือไม่ (ตัวพิมพ์เล็ก-ใหญ่มีผล)");
                     }
-                    
-                    // Map Balances
-                    balances = data.points.map((p, index) => {
-                        let total = parseFloat(p["สุทธิ 2026"]) || 0;
-                        let used = parseFloat(p["เบิกไปแล้ว 2026"]) || 0;
-                        let remaining = parseFloat(p["คงเหลือ 2026"]) || 0;
-                        return {
-                            id: index + 1,
-                            name: p["ชื่อ"] || "-",
-                            email: p["อีเมล"] || "-",
-                            scgId: p["รหัส"] || "-",
-                            status: p["STATUS"] || "Active",
-                            total: total,
-                            used: used,
-                            remaining: remaining
-                        };
+
+                    // Map Users
+                    appUsers = data.users.map(u => {
+                        let uName = (u["ชื่อ"] || u["Name"] || u["ชื่อ-สกุล"] || "").toString().trim();
+                        let uId = (u["รหัส"] || u["ID"] || u["Username"] || u["รหัสพนักงาน"] || "").toString().trim();
+                        let uEmail = (u["อีเมล"] || u["Email"] || "").toString().trim();
+
+                        let role = "user";
+                        // Find role in column T or related names
+                        for (let key in u) {
+                            if (key.toLowerCase() === 'role' || key === 'Role' || key.includes('สิทธิ์') || key === 'T' || key === 'role') {
+                                let val = (u[key] || "").toString().toLowerCase();
+                                if (val.includes('hr') || val.includes('admin')) {
+                                    role = "hr";
+                                }
+                            }
+                        }
+
+                        // Sakulthk is always HR Admin
+                        if (uId.toLowerCase() === 'sakulthk' || uName.toLowerCase().includes('sakulthk')) {
+                            role = "hr";
+                        }
+
+                        return { id: uId, name: uName, email: uEmail, role: role, raw: u };
                     });
 
                     // Map Requests
                     requests = data.logs.map((log, index) => {
                         let reqStatus = "pending";
                         let sheetStatus = log["สถานะ"] ? log["สถานะ"].toString().trim().toLowerCase() : "";
-                        if(sheetStatus === "approved" || sheetStatus === "อนุมัติ") reqStatus = "approved";
-                        else if(sheetStatus === "rejected" || sheetStatus === "ปฏิเสธ") reqStatus = "rejected";
-                        
+                        if (sheetStatus === "approved" || sheetStatus === "อนุมัติ") reqStatus = "approved";
+                        else if (sheetStatus === "rejected" || sheetStatus === "ปฏิเสธ") reqStatus = "rejected";
+
                         return {
                             id: index + 1,
                             date: log["วันที่"] || "-",
@@ -239,20 +288,115 @@
                             status: reqStatus
                         };
                     }).reverse(); // ให้รายการล่าสุดขึ้นก่อน
+
+                    // Map Balances
+                    balances = data.points.map((p, index) => {
+                        let total = parseFloat(p["สุทธิ 2026"]) || 0;
+                        let email = (p["อีเมล"] || "-").toString().trim();
+                        let name = (p["ชื่อ"] || "-").toString().trim();
+
+                        // Calculate dynamically from requests
+                        let userReqs = requests.filter(r =>
+                            (r.requesterEmail !== "-" && r.requesterEmail === email) ||
+                            (r.requesterName !== "-" && r.requesterName === name)
+                        );
+                        let used = 0;
+                        userReqs.forEach(r => {
+                            if (r.status === 'approved' || r.status === 'pending') {
+                                used += r.amount;
+                            }
+                        });
+
+                        let remaining = total - used;
+
+                        return {
+                            id: index + 1,
+                            name: name,
+                            email: email,
+                            scgId: p["รหัส"] || "-",
+                            status: p["STATUS"] || "Active",
+                            total: total,
+                            used: used,
+                            remaining: remaining
+                        };
+                    });
                 }
-                switchTab('portal'); // Render UI
+
+                // Enable Login
+                const loginBtn = document.getElementById('loginBtn');
+                const loginBtnText = document.getElementById('loginBtnText');
+                if (loginBtn) {
+                    loginBtn.disabled = false;
+                    loginBtnText.innerText = 'เข้าสู่ระบบ (Login)';
+                }
+
+                // If already logged in, refresh view
+                if (currentUser) {
+                    if (currentUser.role === 'hr') {
+                        if (hrActiveTab === 'overview') updateChart();
+                        else renderHRDashboard();
+                    } else {
+                        renderEmployeePortal();
+                    }
+                }
             } catch (error) {
                 console.error("Fetch error:", error);
-                document.getElementById('main-content').innerHTML = '<div class="p-10 text-center text-rose-500 bg-rose-50 rounded-xl border border-rose-200 mt-10 mx-auto max-w-lg"><i data-lucide="alert-circle" class="w-10 h-10 mx-auto mb-3"></i><h3 class="font-bold text-lg mb-1">ไม่สามารถเชื่อมต่อฐานข้อมูลได้</h3><p class="text-sm text-rose-600 mb-4">โปรดตรวจสอบว่าคุณได้ใส่ URL_WEB_APP ที่ถูกต้องในบรรทัดแรกของ Javascript หรือยัง</p></div>';
-                lucide.createIcons();
+                const loginBtnText = document.getElementById('loginBtnText');
+                if (loginBtnText) loginBtnText.innerText = 'โหลดข้อมูลล้มเหลว';
             }
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('loginPassword').value.trim().toLowerCase();
+
+            const user = appUsers.find(u =>
+                u.email.toLowerCase() === emailInput &&
+                u.id.toLowerCase() === passwordInput
+            );
+
+            if (user) {
+                currentUser = user;
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('app-container').classList.remove('hidden');
+                document.getElementById('app-container').classList.add('flex');
+
+                document.getElementById('header-user-name').innerText = user.name || user.id;
+                document.getElementById('header-user-role').innerText = user.role === 'hr' ? 'HR Admin' : 'Employee';
+
+                if (user.role !== 'hr') {
+                    document.getElementById('nav-dashboard').style.display = 'none';
+                    switchTab('portal');
+                } else {
+                    document.getElementById('nav-dashboard').style.display = 'flex';
+                    switchTab('dashboard'); // Start HR at dashboard
+                }
+            } else {
+                document.getElementById('loginError').classList.remove('hidden');
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            document.getElementById('app-container').classList.add('hidden');
+            document.getElementById('app-container').classList.remove('flex');
+            document.getElementById('login-container').classList.remove('hidden');
         }
 
         // Tab Switching Logic
         function switchTab(tabId) {
+            if (tabId === 'dashboard' && currentUser && currentUser.role !== 'hr') {
+                alert('คุณไม่มีสิทธิ์เข้าถึงหน้านี้');
+                return;
+            }
+
             const portalNav = document.getElementById('nav-portal');
             const dashNav = document.getElementById('nav-dashboard');
-            
+
             const activeClass = 'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors bg-zinc-900 text-white shadow-sm';
             const inactiveClass = 'w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors text-zinc-600 hover:bg-zinc-100';
 
@@ -274,7 +418,7 @@
             const container = document.getElementById('main-content');
             const myBalance = balances.find(b => b.email === currentUser.email) || { total: 0, used: 0, remaining: 0 };
             const myRequests = requests.filter(r => r.requesterEmail === currentUser.email);
-            
+
             let historyHtml = myRequests.length > 0 ? myRequests.map(r => `
                 <tr class="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                     <td class="p-4 text-sm text-zinc-500 whitespace-nowrap">${r.date}</td>
@@ -359,7 +503,7 @@
 
         function renderHRDashboard() {
             const container = document.getElementById('main-content');
-            
+
             // Calculate Stats
             const pendingReqs = requests.filter(r => r.status === 'pending');
             const approvedReqs = requests.filter(r => r.status === 'approved');
@@ -368,7 +512,55 @@
             // Generate content based on sub-tab
             let tabContentHtml = '';
 
-            if (hrActiveTab === 'pending') {
+            if (hrActiveTab === 'overview') {
+                const uniqueNames = [...new Set(requests.map(r => r.requesterName))].sort();
+                const uniqueMonths = [...new Set(requests.map(r => {
+                    const parts = r.date.split('/');
+                    if (parts.length >= 2) return `${parts[1]}/${parts[2].split(' ')[0]}`;
+                    return "Unknown";
+                }))].filter(m => m !== "Unknown").sort((a, b) => {
+                    const [mA, yA] = a.split('/');
+                    const [mB, yB] = b.split('/');
+                    if (yA !== yB) return parseInt(yA) - parseInt(yB);
+                    return parseInt(mA) - parseInt(mB);
+                });
+
+                const nameOptions = uniqueNames.map(n => `<option value="${n}">${n}</option>`).join('');
+                const monthOptions = uniqueMonths.map(m => `<option value="${m}">${m}</option>`).join('');
+
+                tabContentHtml = `
+                    <div class="p-6">
+                        <div class="flex flex-col md:flex-row gap-4 mb-6 bg-zinc-50 p-4 rounded-xl border border-zinc-200">
+                            <div class="flex-1">
+                                <label class="text-sm font-semibold text-zinc-700 mb-1.5 block">
+                                    <i data-lucide="user" class="inline w-4 h-4 mr-1"></i> กรองตามพนักงาน
+                                </label>
+                                <select id="filterEmp" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-white" onchange="updateChart()">
+                                    <option value="all">ทุกคน (All Employees)</option>
+                                    ${nameOptions}
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label class="text-sm font-semibold text-zinc-700 mb-1.5 block">
+                                    <i data-lucide="calendar" class="inline w-4 h-4 mr-1"></i> กรองตามเดือน (MM/YYYY)
+                                </label>
+                                <select id="filterMonth" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 bg-white" onchange="updateChart()">
+                                    <option value="all">ทุกเดือน (All Months)</option>
+                                    ${monthOptions}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white border border-zinc-200 rounded-xl p-4 shadow-sm h-80 relative w-full">
+                            <canvas id="reimbursementChart"></canvas>
+                        </div>
+                    </div>
+                `;
+
+                setTimeout(() => {
+                    updateChart();
+                }, 50);
+            } else if (hrActiveTab === 'pending') {
                 let pendingHtml = pendingReqs.length > 0 ? pendingReqs.map(r => `
                     <tr class="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td class="p-4">
@@ -439,7 +631,7 @@
                     </div>
                 `;
             } else if (hrActiveTab === 'history') {
-                 let histHtml = requests.map(r => `
+                let histHtml = requests.map(r => `
                     <tr class="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td class="p-4 text-sm text-zinc-500">${r.date}</td>
                         <td class="p-4 font-medium text-zinc-900">${r.requesterName}</td>
@@ -556,6 +748,9 @@
                     <div class="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden mt-6">
                         <!-- Sub Tabs -->
                         <div class="p-2 border-b border-zinc-200 bg-zinc-50 flex gap-2 overflow-x-auto">
+                            <button onclick="switchHRTab('overview')" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${hrActiveTab === 'overview' ? 'bg-white shadow-sm text-zinc-900 border border-zinc-200' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50'}">
+                                <i data-lucide="bar-chart-2" class="w-4 h-4"></i> ภาพรวม (Dashboard)
+                            </button>
                             <button onclick="switchHRTab('pending')" class="px-5 py-2.5 rounded-lg text-sm font-bold transition-all whitespace-nowrap flex items-center gap-2 ${hrActiveTab === 'pending' ? 'bg-white shadow-sm text-zinc-900 border border-zinc-200' : 'text-zinc-500 hover:text-zinc-900 hover:bg-zinc-200/50'}">
                                 <i data-lucide="clipboard-check" class="w-4 h-4"></i> รออนุมัติ (Pending)
                             </button>
@@ -583,6 +778,94 @@
             lucide.createIcons();
         }
 
+        function updateChart() {
+            const empFilter = document.getElementById('filterEmp') ? document.getElementById('filterEmp').value : 'all';
+            const monthFilter = document.getElementById('filterMonth') ? document.getElementById('filterMonth').value : 'all';
+
+            let filteredReqs = requests.filter(r => r.status === 'approved'); // นับเฉพาะที่อนุมัติแล้ว
+
+            if (empFilter !== 'all') {
+                filteredReqs = filteredReqs.filter(r => r.requesterName === empFilter);
+            }
+
+            if (monthFilter !== 'all') {
+                filteredReqs = filteredReqs.filter(r => {
+                    const parts = r.date.split('/');
+                    if (parts.length >= 2) {
+                        const m = `${parts[1]}/${parts[2].split(' ')[0]}`;
+                        return m === monthFilter;
+                    }
+                    return false;
+                });
+            }
+
+            const grouped = {};
+            filteredReqs.forEach(r => {
+                const parts = r.date.split('/');
+                let m = "Unknown";
+                if (parts.length >= 2) {
+                    m = `${parts[1]}/${parts[2].split(' ')[0]}`;
+                }
+                if (!grouped[m]) grouped[m] = 0;
+                grouped[m] += r.amount;
+            });
+
+            const labels = Object.keys(grouped).sort((a, b) => {
+                if (a === "Unknown") return 1;
+                if (b === "Unknown") return -1;
+                const [mA, yA] = a.split('/');
+                const [mB, yB] = b.split('/');
+                if (yA !== yB) return parseInt(yA) - parseInt(yB);
+                return parseInt(mA) - parseInt(mB);
+            });
+            const data = labels.map(l => grouped[l]);
+
+            const ctx = document.getElementById('reimbursementChart');
+            if (!ctx) return;
+
+            if (dashboardChart) {
+                dashboardChart.destroy();
+            }
+
+            dashboardChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels.length > 0 ? labels : ['ไม่มีข้อมูล'],
+                    datasets: [{
+                        label: 'ยอดเบิกสวัสดิการ (บาท)',
+                        data: data.length > 0 ? data : [0],
+                        backgroundColor: '#18181b', // zinc-900
+                        borderRadius: 6,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    return new Intl.NumberFormat('th-TH').format(context.parsed.y) + ' ฿';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function (value) {
+                                    return new Intl.NumberFormat('th-TH').format(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
         // --- Helper Functions & Actions ---
 
         function getStatusBadge(status) {
@@ -592,21 +875,21 @@
             return `<span class="px-2.5 py-1 text-xs font-bold rounded-full bg-zinc-100 text-zinc-700 border border-zinc-200 w-fit">${status}</span>`;
         }
 
-        function openModal(id) { 
-            document.getElementById(id).classList.add('active'); 
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
         }
-        
-        function closeModal(id) { 
-            document.getElementById(id).classList.remove('active'); 
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
             // Clear form
-            if(id === 'requestModal') {
+            if (id === 'requestModal') {
                 document.getElementById('reqDesc').value = '';
                 document.getElementById('reqCategory').value = '';
                 document.getElementById('reqReceipt').value = '';
                 document.getElementById('reqAmount').value = '';
             }
         }
-        
+
         async function submitRequest(e) {
             e.preventDefault();
             const btn = e.target.querySelector('button[type="submit"]');
@@ -617,9 +900,25 @@
             const cat = document.getElementById('reqCategory').value;
             const rec = document.getElementById('reqReceipt').value;
             const amt = parseFloat(document.getElementById('reqAmount').value);
-            
+
+            // Check remaining balance
+            const myBalance = balances.find(b => b.email === currentUser.email);
+            if (!myBalance) {
+                alert("ไม่พบข้อมูลสิทธิ์การเบิกสวัสดิการของคุณ");
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> ยืนยันการส่งคำขอ';
+                btn.disabled = false;
+                return;
+            }
+
+            if (amt > myBalance.remaining) {
+                alert(`ยอดเบิก (${amt.toLocaleString()} บาท) เกินกว่าพอยต์คงเหลือของคุณ (${myBalance.remaining.toLocaleString()} บาท)`);
+                btn.innerHTML = '<i data-lucide="send" class="w-4 h-4"></i> ยืนยันการส่งคำขอ';
+                btn.disabled = false;
+                return;
+            }
+
             const now = new Date();
-            const dateStr = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth()+1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            const dateStr = `${now.getDate().toString().padStart(2, '0')}/${(now.getMonth() + 1).toString().padStart(2, '0')}/${now.getFullYear()} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
 
             const payload = {
                 action: "addRequest",
@@ -631,7 +930,7 @@
                 receipt: rec,
                 amount: amt
             };
-            
+
             try {
                 await fetch(WEB_APP_URL, {
                     method: 'POST',
@@ -649,10 +948,10 @@
         }
 
         async function approveReq(id) {
-            if(!confirm('ยืนยันการอนุมัติคำขอนี้? ข้อมูลจะถูกอัพเดทใน Google Sheet')) return;
+            if (!confirm('ยืนยันการอนุมัติคำขอนี้? ข้อมูลจะถูกอัพเดทใน Google Sheet')) return;
 
             let req = requests.find(r => r.id === id);
-            if(req && req.status === 'pending') {
+            if (req && req.status === 'pending') {
                 try {
                     await fetch(WEB_APP_URL, {
                         method: 'POST',
@@ -660,15 +959,15 @@
                     });
                     alert('อนุมัติเรียบร้อยแล้ว');
                     fetchDataFromSheet();
-                } catch(e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
+                } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
             }
         }
 
         async function rejectReq(id) {
-            if(!confirm('ยืนยันการปฏิเสธคำขอนี้? ข้อมูลจะถูกอัพเดทใน Google Sheet')) return;
+            if (!confirm('ยืนยันการปฏิเสธคำขอนี้? ข้อมูลจะถูกอัพเดทใน Google Sheet')) return;
 
             let req = requests.find(r => r.id === id);
-            if(req && req.status === 'pending') {
+            if (req && req.status === 'pending') {
                 try {
                     await fetch(WEB_APP_URL, {
                         method: 'POST',
@@ -676,7 +975,7 @@
                     });
                     alert('ปฏิเสธคำขอเรียบร้อย');
                     fetchDataFromSheet();
-                } catch(e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
+                } catch (e) { alert("เกิดข้อผิดพลาดในการเชื่อมต่อ"); }
             }
         }
 
@@ -702,7 +1001,7 @@
             const scgId = document.getElementById('empScgId').value;
             const quota = parseFloat(document.getElementById('empQuota').value) || 0;
             let rollover = parseFloat(document.getElementById('empRollover').value) || 0;
-            
+
             if (rollover > 20000) rollover = 20000;
             const total = quota + rollover;
 
@@ -733,4 +1032,5 @@
         }
     </script>
 </body>
+
 </html>
