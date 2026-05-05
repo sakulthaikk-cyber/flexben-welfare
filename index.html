@@ -202,10 +202,140 @@
         </div>
     </div>
 
+    <!-- Modal: Edit Request -->
+    <div id="editClaimModal" class="modal">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 animate-in relative mx-4">
+            <button onclick="closeModal('editClaimModal')"
+                class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-full p-1 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+            <h2 class="text-xl font-bold text-zinc-900 mb-1">แก้ไขคำขอเบิกสวัสดิการ</h2>
+            <form onsubmit="submitEditClaim(event)" class="space-y-4 mt-6">
+                <input type="hidden" id="editReqId">
+                <div class="space-y-1.5">
+                    <label class="text-sm font-semibold text-zinc-700">1. ชื่อรายการเบิก (Description)</label>
+                    <input type="text" id="editReqDesc"
+                        class="w-full border border-zinc-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow"
+                        required>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-semibold text-zinc-700">2. หมวดหมู่สวัสดิการ (Category)</label>
+                    <select id="editReqCategory"
+                        class="w-full border border-zinc-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow bg-white"
+                        required>
+                        <option value="Health and Wellness">Health and Wellness</option>
+                        <option value="Wealth">Wealth</option>
+                        <option value="Education">Education</option>
+                        <option value="อื่นๆ">อื่นๆ</option>
+                    </select>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-semibold text-zinc-700">3. เลขใบเสร็จ (Receipt No.)</label>
+                    <input type="text" id="editReqReceipt"
+                        class="w-full border border-zinc-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow bg-zinc-50"
+                        required readonly>
+                    <p class="text-[11px] text-zinc-500 mt-1">* ไม่สามารถแก้ไขเลขใบเสร็จได้เพื่อใช้อ้างอิง</p>
+                </div>
+                <div class="space-y-1.5">
+                    <label class="text-sm font-semibold text-zinc-700">4. จำนวนเงินที่เบิก (Amount)</label>
+                    <input type="number" id="editReqAmount"
+                        class="w-full border border-zinc-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900 transition-shadow"
+                        max="25000" required>
+                </div>
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-zinc-900 text-white rounded-xl py-3 font-semibold hover:bg-zinc-800 transition-transform active:scale-[0.98] shadow-md flex justify-center items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> บันทึกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Approved Amount (HR) -->
+    <div id="editAmountModal" class="modal">
+        <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 animate-in relative mx-4">
+            <button onclick="closeModal('editAmountModal')"
+                class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-full p-1 transition-colors"><i
+                    data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-xl font-bold text-zinc-900 mb-1">แก้ไขยอดเงินที่อนุมัติ</h2>
+            <form onsubmit="submitEditAmount(event)" class="space-y-4 mt-6">
+                <input type="hidden" id="hrEditReqReceipt">
+                <div class="space-y-1.5">
+                    <label class="text-sm font-semibold text-zinc-700">ยอดเงินใหม่</label>
+                    <input type="number" id="hrEditAmount"
+                        class="w-full border border-zinc-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-zinc-900"
+                        required>
+                </div>
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-emerald-600 text-white rounded-xl py-3 font-semibold hover:bg-emerald-700 transition-transform active:scale-[0.98] shadow-md flex justify-center items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> บันทึกยอดเงิน
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Edit Employee -->
+    <div id="editEmployeeModal" class="modal">
+        <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full p-6 animate-in relative mx-4">
+            <button onclick="closeModal('editEmployeeModal')"
+                class="absolute top-4 right-4 text-zinc-400 hover:text-zinc-700 bg-zinc-100 hover:bg-zinc-200 rounded-full p-1 transition-colors"><i
+                    data-lucide="x" class="w-4 h-4"></i></button>
+            <h2 class="text-xl font-bold text-zinc-900 mb-6">แก้ไขข้อมูลพนักงาน</h2>
+            <form onsubmit="submitEditEmployee(event)" class="space-y-4">
+                <input type="hidden" id="editEmpEmailHidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">ชื่อ (First Name)</label>
+                        <input type="text" id="editEmpFirstName"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900"
+                            required>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">นามสกุล (Last Name)</label>
+                        <input type="text" id="editEmpLastName"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">ชื่อตำแหน่ง (Position)</label>
+                        <input type="text" id="editEmpPosition"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">สถานะ</label>
+                        <select id="editEmpStatus"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-zinc-900">
+                            <option value="Active">Active</option>
+                            <option value="Resigned">Resigned</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">วันเข้างาน (Start Date)</label>
+                        <input type="date" id="editEmpStartDate"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="text-sm font-semibold text-zinc-700">วันผ่านทดลองงาน (Probation End)</label>
+                        <input type="date" id="editEmpProbation"
+                            class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900">
+                    </div>
+                </div>
+                <div class="pt-4">
+                    <button type="submit"
+                        class="w-full bg-zinc-900 text-white rounded-xl py-3 font-semibold hover:bg-zinc-800 transition-transform active:scale-[0.98] shadow-md flex justify-center items-center gap-2">
+                        <i data-lucide="save" class="w-4 h-4"></i> บันทึกการแก้ไข
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Javascript Logic for Static Dashboard -->
     <script>
         // Mock Data Storage (To simulate the database)
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwrBms-aj7pNwBeGhbQx-tiV0AupOk0v3OGUZT9IiEDzwmPmp8emjBq1RWtAvr73O2e/exec"; // ⚠️ แทนที่ด้วย URL ของคุณ
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw0ZuEcjnU8IuL8AEfKPqi2EzhJW95FTqJp_zqNhDemwMaMA_Hn8uUrNz1UwRqRwdbE/exec"; // ⚠️ แทนที่ด้วย URL ของคุณ
 
         let currentUser = null;
         let appUsers = [];
@@ -294,11 +424,20 @@
                         let total = parseFloat(p["สุทธิ 2026"]) || 0;
                         let email = (p["อีเมล"] || "-").toString().trim();
                         let name = (p["ชื่อ"] || "-").toString().trim();
+                        let firstName = (p["ชื่อ"] || "-").toString().trim();
+                        let lastName = (p["นามสกุล"] || "").toString().trim();
+                        let fullName = firstName;
+                        if (lastName && lastName !== "-") fullName += " " + lastName;
+
+                        let position = (p["ตำแหน่ง"] || "-").toString().trim();
+                        let startDate = (p["วันเข้างาน"] || p["วันที่เริ่มงาน"] || "-").toString().trim();
+                        let probationDate = (p["วันผ่านทดลองงาน"] || "-").toString().trim();
 
                         // Calculate dynamically from requests
                         let userReqs = requests.filter(r =>
                             (r.requesterEmail !== "-" && r.requesterEmail === email) ||
-                            (r.requesterName !== "-" && r.requesterName === name)
+                            (r.requesterName !== "-" && r.requesterName === name) ||
+                            (r.requesterName !== "-" && r.requesterName === fullName)
                         );
                         let used = 0;
                         userReqs.forEach(r => {
@@ -311,10 +450,15 @@
 
                         return {
                             id: index + 1,
-                            name: name,
+                            name: fullName !== "-" ? fullName : name,
+                            firstName: firstName,
+                            lastName: lastName,
                             email: email,
                             scgId: p["รหัส"] || "-",
                             status: p["STATUS"] || "Active",
+                            position: position,
+                            startDate: startDate,
+                            probationDate: probationDate,
                             total: total,
                             used: used,
                             remaining: remaining
@@ -427,7 +571,12 @@
                     <td class="p-4 font-medium text-zinc-900">${r.title}</td>
                     <td class="p-4 text-sm text-zinc-500 tabular-nums">${r.receipt}</td>
                     <td class="p-4 font-mono font-medium text-zinc-900 text-right">${r.amount.toLocaleString()}</td>
-                    <td class="p-4 text-center">${getStatusBadge(r.status)}</td>
+                    <td class="p-4 text-center">
+                        <div class="flex items-center justify-center gap-2">
+                            ${getStatusBadge(r.status)}
+                            ${r.status === 'pending' ? `<button onclick="editClaim(${r.id})" class="text-zinc-400 hover:text-blue-600 transition-colors" title="แก้ไขรายการ"><i data-lucide="pencil" class="w-4 h-4"></i></button>` : ''}
+                        </div>
+                    </td>
                 </tr>
             `).join('') : `<tr><td colspan="7" class="p-8 text-center text-zinc-500">ไม่มีประวัติการเบิกจ่าย</td></tr>`;
 
@@ -577,7 +726,8 @@
                         <td class="p-4 font-mono font-bold text-zinc-900 text-right">${r.amount.toLocaleString()}</td>
                         <td class="p-4 text-right whitespace-nowrap">
                             <button onclick="rejectReq(${r.id})" class="bg-white border border-rose-200 text-rose-600 hover:bg-rose-50 hover:border-rose-300 px-3 py-1.5 rounded-lg text-xs font-semibold mr-2 transition-colors">ปฏิเสธ (Reject)</button>
-                            <button onclick="approveReq(${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm transition-colors">อนุมัติ (Approve)</button>
+                            <button onclick="approveReq(${r.id})" class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold shadow-sm mr-2 transition-colors">อนุมัติ (Approve)</button>
+                            <button onclick="deleteClaim(${r.id})" class="text-zinc-400 hover:text-rose-600 hover:bg-rose-50 bg-white border border-zinc-200 px-2 py-1.5 rounded-lg transition-colors align-middle" title="ลบรายการ"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
                         </td>
                     </tr>
                 `).join('') : `<tr><td colspan="7" class="p-12 text-center text-zinc-500 flex flex-col items-center justify-center w-full"><i data-lucide="check-circle" class="w-12 h-12 text-zinc-300 mb-3"></i>ไม่มีรายการรออนุมัติ</td></tr>`;
@@ -604,13 +754,18 @@
                 let empHtml = balances.map(b => `
                     <tr class="border-b border-zinc-100 hover:bg-zinc-50 transition-colors">
                         <td class="p-4">
-                            <div class="font-bold text-zinc-900">${b.name}</div>
+                            <div class="font-bold text-zinc-900">${b.firstName} ${b.lastName}</div>
                             <div class="text-xs text-zinc-500">${b.email}</div>
                         </td>
-                        <td class="p-4 text-sm font-mono text-zinc-600">${b.scgId}</td>
+                        <td class="p-4 text-sm text-zinc-600">${b.position}</td>
+                        <td class="p-4 text-sm text-zinc-600">${b.startDate}</td>
+                        <td class="p-4 text-sm text-zinc-600">${b.probationDate}</td>
                         <td class="p-4"><span class="px-2.5 py-1 text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full font-medium">${b.status}</span></td>
-                        <td class="p-4 font-mono text-zinc-600 text-right">${b.total.toLocaleString()}</td>
-                        <td class="p-4 font-mono font-bold text-zinc-900 text-right">${b.remaining.toLocaleString()}</td>
+                        <td class="p-4 font-mono font-bold text-zinc-900 text-right">
+                            ${b.remaining.toLocaleString()}
+                            <button onclick="editEmployee('${b.email}')" class="ml-2 text-zinc-400 hover:text-blue-600 transition-colors" title="แก้ไขข้อมูลพนักงาน"><i data-lucide="pencil" class="w-4 h-4 inline"></i></button>
+                            <button onclick="deleteEmployee('${b.email}')" class="ml-2 text-zinc-400 hover:text-rose-600 transition-colors" title="ลบข้อมูลพนักงาน"><i data-lucide="trash-2" class="w-4 h-4 inline"></i></button>
+                        </td>
                     </tr>
                 `).join('');
 
@@ -620,10 +775,11 @@
                             <thead class="bg-zinc-50 text-xs uppercase text-zinc-500 font-bold border-b border-zinc-200">
                                 <tr>
                                     <th class="p-4">พนักงาน (Employee)</th>
-                                    <th class="p-4">SCG User ID</th>
+                                    <th class="p-4">ตำแหน่ง</th>
+                                    <th class="p-4">วันเข้างาน</th>
+                                    <th class="p-4">วันผ่านโปร</th>
                                     <th class="p-4">สถานะ</th>
-                                    <th class="p-4 text-right">พอยต์ทั้งหมด (Total)</th>
-                                    <th class="p-4 text-right">พอยต์คงเหลือ (Remaining)</th>
+                                    <th class="p-4 text-right">พอยต์คงเหลือ</th>
                                 </tr>
                             </thead>
                             <tbody>${empHtml}</tbody>
@@ -637,7 +793,13 @@
                         <td class="p-4 font-medium text-zinc-900">${r.requesterName}</td>
                         <td class="p-4 text-sm text-zinc-600">${r.title}</td>
                         <td class="p-4 font-mono font-medium text-zinc-900 text-right">${r.amount.toLocaleString()}</td>
-                        <td class="p-4 text-center">${getStatusBadge(r.status)}</td>
+                        <td class="p-4 text-center">
+                            <div class="flex items-center justify-center gap-2">
+                                ${getStatusBadge(r.status)}
+                                ${r.status === 'approved' ? `<button onclick="editApprovedAmount(${r.id})" class="text-zinc-400 hover:text-blue-600 transition-colors" title="แก้ไขยอดที่อนุมัติ"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                <button onclick="deleteClaim(${r.id})" class="text-zinc-400 hover:text-rose-600 transition-colors" title="ลบรายการ"><i data-lucide="trash-2" class="w-4 h-4"></i></button>` : ''}
+                            </div>
+                        </td>
                     </tr>
                 `).join('');
 
@@ -681,18 +843,33 @@
                         <form onsubmit="submitAddEmployee(event)" class="space-y-4">
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="space-y-1.5">
-                                    <label class="text-sm font-semibold text-zinc-700">ชื่อ-นามสกุล</label>
-                                    <input type="text" id="empName" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" required placeholder="เช่น สมชาย ใจดี">
+                                    <label class="text-sm font-semibold text-zinc-700">ชื่อ (First Name)</label>
+                                    <input type="text" id="empFirstName" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" required placeholder="เช่น สมชาย">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-zinc-700">นามสกุล (Last Name)</label>
+                                    <input type="text" id="empLastName" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" placeholder="เช่น ใจดี">
                                 </div>
                                 <div class="space-y-1.5">
                                     <label class="text-sm font-semibold text-zinc-700">อีเมล (User Email)</label>
                                     <input type="email" id="empEmail" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" required placeholder="email@company.com">
                                 </div>
-                            </div>
-                            
-                            <div class="space-y-1.5">
-                                <label class="text-sm font-semibold text-zinc-700">เลขพนักงาน (SCG User ID)</label>
-                                <input type="text" id="empScgId" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" required placeholder="เช่น somchai_j">
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-zinc-700">รหัสพนักงาน (SCG User ID) - สำหรับเข้าสู่ระบบ</label>
+                                    <input type="text" id="empScgId" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" required placeholder="เช่น somchai_j">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-zinc-700">ชื่อตำแหน่ง (Position)</label>
+                                    <input type="text" id="empPosition" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none" placeholder="เช่น Marketing Officer">
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="text-sm font-semibold text-zinc-700">วันเข้างาน (Start Date)</label>
+                                    <input type="date" id="empStartDate" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none">
+                                </div>
+                                <div class="space-y-1.5 md:col-span-2">
+                                    <label class="text-sm font-semibold text-zinc-700">วันผ่านทดลองงาน (Probation End)</label>
+                                    <input type="date" id="empProbation" class="w-full border border-zinc-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-zinc-900 focus:outline-none w-full md:w-1/2">
+                                </div>
                             </div>
 
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 p-5 bg-blue-50/50 border border-blue-100 rounded-xl">
@@ -996,20 +1173,30 @@
             btn.innerHTML = '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> กำลังบันทึกข้อมูลลง Sheet...';
             btn.disabled = true;
 
-            const name = document.getElementById('empName').value;
+            const firstName = document.getElementById('empFirstName').value;
+            const lastName = document.getElementById('empLastName').value;
             const email = document.getElementById('empEmail').value;
             const scgId = document.getElementById('empScgId').value;
+            const position = document.getElementById('empPosition').value;
+            const startDate = document.getElementById('empStartDate').value;
+            const probationDate = document.getElementById('empProbation').value;
             const quota = parseFloat(document.getElementById('empQuota').value) || 0;
             let rollover = parseFloat(document.getElementById('empRollover').value) || 0;
 
             if (rollover > 20000) rollover = 20000;
             const total = quota + rollover;
 
+            const fullName = firstName + (lastName ? " " + lastName : "");
             const payload = {
                 action: "addEmployee",
-                name: name,
+                name: fullName,
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 scgId: scgId,
+                position: position,
+                startDate: startDate,
+                probationDate: probationDate,
                 quota: quota,
                 rollover: rollover,
                 totalPoints: total
@@ -1028,6 +1215,177 @@
             } finally {
                 btn.innerHTML = '<i data-lucide="user-plus" class="w-5 h-5"></i> บันทึกข้อมูลพนักงาน';
                 btn.disabled = false;
+            }
+        }
+
+        // --- Edit Functions ---
+        function editClaim(id) {
+            const req = requests.find(r => r.id === id);
+            if (req && req.status === 'pending') {
+                document.getElementById('editReqId').value = id;
+                document.getElementById('editReqDesc').value = req.title;
+                document.getElementById('editReqCategory').value = req.category;
+                document.getElementById('editReqReceipt').value = req.receipt;
+                document.getElementById('editReqAmount').value = req.amount;
+                openModal('editClaimModal');
+            }
+        }
+
+        async function submitEditClaim(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const id = parseInt(document.getElementById('editReqId').value);
+            const desc = document.getElementById('editReqDesc').value;
+            const cat = document.getElementById('editReqCategory').value;
+            const rec = document.getElementById('editReqReceipt').value;
+            const amt = parseFloat(document.getElementById('editReqAmount').value);
+
+            const req = requests.find(r => r.id === id);
+            if (!req) return;
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "editRequest", receipt: rec, description: desc, category: cat, amount: amt })
+                });
+                alert('อัพเดทคำขอสำเร็จ');
+                closeModal('editClaimModal');
+                fetchDataFromSheet();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการบันทึก");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function editApprovedAmount(id) {
+            const req = requests.find(r => r.id === id);
+            if (req && req.status === 'approved') {
+                document.getElementById('hrEditReqReceipt').value = req.receipt;
+                document.getElementById('hrEditAmount').value = req.amount;
+                openModal('editAmountModal');
+            }
+        }
+
+        async function submitEditAmount(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const rec = document.getElementById('hrEditReqReceipt').value;
+            const amt = parseFloat(document.getElementById('hrEditAmount').value);
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "editApprovedAmount", receipt: rec, amount: amt })
+                });
+                alert('แก้ไขยอดเงินสำเร็จ');
+                closeModal('editAmountModal');
+                fetchDataFromSheet();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการบันทึก");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        function editEmployee(email) {
+            const b = balances.find(x => x.email === email);
+            if (b) {
+                document.getElementById('editEmpEmailHidden').value = b.email;
+                document.getElementById('editEmpFirstName').value = b.firstName;
+                document.getElementById('editEmpLastName').value = b.lastName;
+                document.getElementById('editEmpPosition').value = b.position;
+                document.getElementById('editEmpStatus').value = b.status;
+                document.getElementById('editEmpStartDate').value = formatDateForInput(b.startDate);
+                document.getElementById('editEmpProbation').value = formatDateForInput(b.probationDate);
+                openModal('editEmployeeModal');
+            }
+        }
+
+        function formatDateForInput(dateStr) {
+            if (!dateStr || dateStr === '-') return '';
+            if (dateStr.includes('/')) {
+                const parts = dateStr.split(' ')[0].split('/');
+                if (parts.length === 3) {
+                    return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                }
+            }
+            return dateStr.split(' ')[0];
+        }
+
+        async function submitEditEmployee(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i data-lucide="loader-2" class="w-4 h-4 animate-spin inline"></i> กำลังบันทึก...';
+            btn.disabled = true;
+
+            const email = document.getElementById('editEmpEmailHidden').value;
+            const fname = document.getElementById('editEmpFirstName').value;
+            const lname = document.getElementById('editEmpLastName').value;
+            const pos = document.getElementById('editEmpPosition').value;
+            const status = document.getElementById('editEmpStatus').value;
+            const sDate = document.getElementById('editEmpStartDate').value;
+            const pDate = document.getElementById('editEmpProbation').value;
+
+            const fullName = fname + (lname ? " " + lname : "");
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "editEmployee", name: fullName, email: email, firstName: fname, lastName: lname, position: pos, status: status, startDate: sDate, probationDate: pDate })
+                });
+                alert('แก้ไขข้อมูลพนักงานสำเร็จ');
+                closeModal('editEmployeeModal');
+                fetchDataFromSheet();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการบันทึก");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        }
+        async function deleteEmployee(email) {
+            if (!confirm(`ยืนยันการลบข้อมูลพนักงาน (${email}) ออกจากระบบ? การกระทำนี้ไม่สามารถย้อนกลับได้`)) return;
+
+            try {
+                // To display loading status you can create a temporary loading overlay or just use fetch
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "deleteEmployee", email: email })
+                });
+                alert('ลบข้อมูลพนักงานสำเร็จ');
+                fetchDataFromSheet();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการลบข้อมูล");
+            }
+        }
+
+        async function deleteClaim(id) {
+            const req = requests.find(r => r.id === id);
+            if (!req) return;
+
+            if (!confirm(`ยืนยันการลบรายการเบิกของ ${req.requesterName} (Ref No: ${req.ref})? การกระทำนี้ไม่สามารถย้อนกลับได้`)) return;
+
+            try {
+                await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "deleteRequest", receipt: req.receipt })
+                });
+                alert('ลบรายการสำเร็จ');
+                fetchDataFromSheet();
+            } catch (error) {
+                alert("เกิดข้อผิดพลาดในการลบรายการ");
             }
         }
     </script>
